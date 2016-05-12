@@ -1,0 +1,206 @@
+\documentclass[a4paper, 11pt, twoside, openany, titlepage, dvipsnames]{book}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{caption} %for captions
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{float}
+% page layout with the geometry package
+\usepackage[margin=1.0in, centering]{geometry}
+% changing line pitch
+\usepackage{setspace}
+% for floating text around an image
+\usepackage{wrapfig}
+% for arbitrarily enumerated lists
+\usepackage{enumerate}
+% natbib
+\usepackage{natbib}
+% color names
+\usepackage[usenames]{xcolor}
+% for colored headings
+\usepackage{titlesec}
+% for colored table segments
+\usepackage{colortbl}
+% additional symbols
+\usepackage{marvosym}
+\newcommand{\alert}[1]{{\centering\fbox{\parbox{0.98\linewidth}{\noindent {\huge\color{Red}\Stopsign}\bfseries #1}}}}
+\newcommand{\alertv}[1]{{\centering\fbox{\parbox{0.98\linewidth}{\noindent {\huge\color{Red}\Stopsign} #1}}}}
+
+\usepackage{listings}
+\lstloadlanguages{Python,bash,C++}
+\lstset{showspaces=false,
+basicstyle=\small,
+showstringspaces=false}
+
+\definecolor{pblue}{RGB}{45,106,148}
+\definecolor{pdarkblue}{RGB}{35,71,100}
+\definecolor{plightblue}{RGB}{90,159,212}
+\definecolor{pyellow}{RGB}{255,212,59}
+\definecolor{pdarkyellow}{RGB}{255,188,41}
+\definecolor{plightyellow}{RGB}{255,232,115}
+\definecolor{pdarkgrey}{RGB}{100,100,100}
+\definecolor{pgrey}{RGB}{153,153,153}
+\definecolor{plightgrey}{RGB}{233,233,233}
+\definecolor{plightgrey2}{RGB}{247,247,247}
+\definecolor{pnavy}{RGB}{0,0,170}
+\definecolor{BrickRed}{RGB}{150,22,11}
+\definecolor{BlueViolet}{RGB}{138, 43, 226}
+\definecolor{PineGreen}{RGB}{0, 51, 0}
+\definecolor{light-gray}{gray}{0.95}
+
+\titleformat{\chapter}[display]
+{\color{pdarkblue}\normalfont\huge\bfseries}{\chaptertitlename\
+\thechapter}{20pt}{\Huge}
+
+\titleformat{\section}
+{\color{pdarkblue}\normalfont\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{pdarkblue}\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{pdarkblue}\normalfont\bfseries}{\thesubsubsection}{1em}{}
+
+%default python listings:
+\lstdefinestyle{Python}
+{
+  language=Python,
+  basicstyle=\small,
+  showstringspaces=false,
+  stepnumber=5,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  showspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{pgrey},
+  backgroundcolor=\color{white},
+  stringstyle=\color{BrickRed},
+  keywordstyle=\color{BlueViolet}\bfseries,
+  commentstyle=\color{PineGreen}\bfseries,
+  identifierstyle={},
+  emph={[10]self}, emphstyle={[10]\color{pblue}},
+  emph={[11]yield}, emphstyle={[11]\color{pblue}},
+}
+
+%default python listings:
+\lstdefinestyle{C++}
+{
+  language=C++,
+  basicstyle=\small,
+  showstringspaces=false,
+  stepnumber=5,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  showspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{pgrey},
+  backgroundcolor=\color{white},
+  stringstyle=\color{BrickRed},
+  keywordstyle=\color{BlueViolet}\bfseries,
+  commentstyle=\color{PineGreen}\bfseries,
+  identifierstyle={},
+  emph={[10]self}, emphstyle={[10]\color{pblue}},
+  emph={[11]yield}, emphstyle={[11]\color{pblue}},
+}
+
+%default shell listings:
+\lstdefinestyle{Shell}
+{
+  language=Bash,
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{pgrey},
+  backgroundcolor=\color{plightgrey2},
+  stringstyle=\color{black},
+  keywordstyle=\color{black},
+  commentstyle=\color{black}\bfseries,
+  identifierstyle=\color{black},
+  emph={[10]\$,>>>}, emphstyle={[10]\color{pblue}}
+}
+
+%default plain listings (e.g. for config files):
+\lstdefinestyle{Plain}
+{ 
+  stepnumber=5,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  language=Bash,
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{pgrey},
+  backgroundcolor=\color{plightgrey2},
+  stringstyle=\color{black},
+  keywordstyle=\color{black},
+  commentstyle=\color{blue}\bfseries,
+  identifierstyle=\color{black},
+  emph={[10]\$,>>>}, emphstyle={[10]\color{pblue}}
+}
+
+\definecolor{UrlColor}{rgb}{0,0.08,0.45}
+
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+
+%\def\pgfsysdriver{pgfsys-dvipdfm.def} % to explicitly load the driver before tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,backgrounds,positioning,shadows,decorations}
+
+% turn on numbering on any level
+\setcounter{secnumdepth}{10}
+% turn on numbering up to \subsubsection in the toc, too
+\setcounter{tocdepth}{3}
+
+\usepackage[pdftex,pdfpagelabels,plainpages=false,pdfborder={0 0 0}]{hyperref}
+% metadata
+\hypersetup{
+pdfauthor = {Christian Meesters},
+pdftitle = {NCAP - NGS Cleaner and Preprocessing},
+pdfsubject = {NGS},
+pdfkeywords = {NGS, R/DNA reads},
+pdfcreator = {LaTeX with hyperref package},
+pdfproducer = {pdflatex}}
+
+\usepackage[scaled]{helvet}
+\renewcommand*\familydefault{\sfdefault}
+
+\author{Christian Meesters}
+
+\begin{document}
+\pagestyle{fancyplain}
+\addtolength{\headheight}{\baselineskip}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\lhead[\fancyplain{}{\thepage}]{\fancyplain{}{\rightmark}}
+\rhead[\fancyplain{}{\leftmark}]{\fancyplain{}{\thepage}}
+\cfoot{}
+
+\include{Title}
+\pagenumbering{roman}
+% Remove parskip for toc
+\setlength{\parskip}{0ex plus 0.5ex minus 0.2ex}
+\tableofcontents
+\pagenumbering{arabic}
+%\include{Introduction}
+%\include{Usage}
+%\include{Algorithms}
+\pagenumbering{roman}
+\appendix
+%\include{Utilities}
+%\include{Shorties}
+\include{Development}
+
+\clearpage\pagebreak
+\addcontentsline{toc}{chapter}{Bibliography}
+
+\bibliographystyle{chicago}	% (uses file "plain.bst")
+\bibliography{./literature}
+
+\end{document}

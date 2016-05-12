@@ -1,0 +1,231 @@
+\chapter[Development]{\textsc{ncap} -- Development}
+
+The following chapters are intended for developers of \textsc{ncap}. You are most welcome to participate! Contributions may not only be code-based: Any bug report, hint on how to improve the manual, or feature request is welcome.
+
+\section{How to retrieve a working copy of \textsc{ncap}}
+
+\textsc{ncap} can be retrieved from github (see \url{https://github.com/cmeesters/ncap}). The git versioning system is available for every operating system. Please contact your local administrator, if you don't know how the program can be installed.
+
+A first checkout can be done as follows, provided you have a github account:
+
+\begin{lstlisting}[style=shell]
+$ git clone git@github.com:cmeesters/ncap.git
+\end{lstlisting}
+
+\section{Building the development version}
+\textsc{ncap} uses \texttt{scons} (see \url{www.scons.org}) as a build system (UNIX's \texttt{make} is the most well-known counterpart). In order to build a git download just type
+\begin{lstlisting}[style=shell]
+$ cd your-ncap-download-path
+$ scons
+$ scons -c # will clean up after building
+\end{lstlisting}
+\texttt{scons} is available for download on the \texttt{scons} web page. However, many systems provide packages for \texttt{scons}. Please consult your sys-admin if in doubt.
+
+\section{Packing a Release Version}
+\alert{Update the \texttt{ncap} version in the \texttt{SConstrust}-file, first. \texttt{ncap} follows the GNU version numbering scheme: major.minor.revision .}
+
+Prior to packing a release, please update the repository first:
+\begin{lstlisting}[style=shell]
+$ git pull
+\end{lstlisting}
+This is because \texttt{ncap} can report is version and revision number and updating first makes sure that users reporting bugs can be sure about the release.
+
+Typing
+\begin{lstlisting}[style=shell]
+$ scons --static
+# and subsequently !!!
+$ scons --pack_release
+\end{lstlisting}
+will create a directory called \texttt{dist} with the appropriately packed files for the current system. The shown static build is optional.
+
+% Right now, there is a variable called \verb+file_list+ in the \texttt{SConstrust}-file which describes the files to be packed, like this:
+% \begin{lstlisting}[style=python]
+%  file_list = [('../ncap', './ncap_%s/ncap' % VERSION),
+%                  ('../LICENSE', './ncap_%s/LICENSE' % VERSION),
+%                  ('../trunk/data/ncap.cfg', 
+%                       './ncap_%s/examples/ncap.cfg' % VERSION),
+%                  ('../trunk/doc/Manual.pdf', 
+%                       './ncap_%s/doc/Manual.pdf' % VERSION)]
+% \end{lstlisting}
+% Read this line as follows: The first item or string in each line is the file to be packed, the second the path where it should end after unpacking/-taring/-zipping the packed files. Please feel free to add all files, which might be useful for potential users after download.
+
+The \texttt{VERSION} parameter is just the version string, which will be used for naming the download directory as a unique identifier of the \textsc{ncap} version.
+
+A file containing the md5 sums for all produced files is written out, too.
+
+
+\section{Building a Debug Version}
+
+Invoking \textsc{scons} like
+\begin{lstlisting}[style=shell]
+$ scons --debug_build
+\end{lstlisting}
+Will compile and link with \verb+-g+, \verb+-pg+, and \verb+-DDEBUG+ flags. The first two flags enable using the GNU debugger (by writing a file named \verb+gmon.out+ when \textsc{ncap} runs). The third flag turns internal error handling routines of \textsc{ncap} off. All this is also used with regard to the debuggers we use.
+
+\section{Selecting Compilers}
+
+For an explicit compiler seletion try:
+\begin{lstlisting}[style=shell]
+$ scons --compiler=g++-4.8.2
+\end{lstlisting}
+for instance.
+
+Currently the GNU C++ compiler, version 4.8.2 and support for C++11 is the minimum requirement.
+
+\section{Parallel Builds with Scons}
+
+Like the infamous GNU \verb+make+ tool, \textsc{scons} allows using the \verb+-j+ option to build an application in parallel:  
+\begin{lstlisting}[style=shell]
+$ scons -j <number of parallel compiler calls>
+\end{lstlisting}
+
+\section{Including Sandboxed Code}
+
+If a Developer wants to create sandbox code, that is code which should not turn up in productive versions of the program until completion of that code, the code in question can be framed with preprocessor guards like this:
+\begin{lstlisting}[style=C++]
+#ifdef SANDBOX
+// your sandbox code here
+#endif
+\end{lstlisting}
+This guard can be applied to entire \verb+cpp+-files.
+
+Issuing the \verb+--sandbox+-flag to scons will turn the \verb+SANDBOX+-preprocessor variable on.
+
+
+\section{Other Options}
+\begin{lstlisting}[style=shell]
+$ scons --help 
+\end{lstlisting}
+will list a bundle of additional options we included to ease the \textsc{ncap} development.
+
+\section{Used Libraries}
+
+\subsection{\texttt{OpenMP}}
+
+\textsc{ncap} uses \texttt{OpenMP} to spawn threads on shared memory systems. This way some algorithms can reach a tremendous speed-up. Please install the appropriate header for your system using the system's packaging tools.
+
+\texttt{gcc} from version 4.4 on will support \texttt{OpenM}P 3.0. We recommend using gcc as the compiler. However, necessary instructions for other compilers are linked here: \url{http://openmp.org/wp/openmp-compilers/}.
+
+\subsection{\texttt{boost}}
+
+\textsc{ncap} makes heavy use of \texttt{boost} (see \url{http://www.boost.org/} for download and instructions). In order to ease the installation process, here a shortcut for Unix-like systems:
+
+\begin{lstlisting}[style=shell]
+$ # need to install MPI library
+$ # Debian and Ubuntu users:
+$ sudo apt-get install lam4-dev libopenmpi-dev
+\end{lstlisting}
+\textbf{Or} check out the git version of modular boost.
+
+\alert{boost checkout is anonymous. See \url{http://www.boost.org/users/download/}. 
+
+Installation:
+\begin{lstlisting}[style=shell]
+$ cd your-boost-download-directory
+$
+$ ./bootstrap.sh --help # shows configuration options
+$ ./bootstrap.sh
+$ ./bjam # this will take a while
+$ # and finally
+$ sudo ./bjam --with-regex install
+\end{lstlisting}
+
+If you don't have administrator rights:
+\begin{lstlisting}[style=shell]
+$ ./bootstrap.sh --prefix=path/to/installation/prefix
+$ ./bjam
+$ ./bjam --with-regex install
+\end{lstlisting}
+
+The \verb+--with-regex+-flag is important!
+
+\alertv{\textbf{Troubleshooting:}
+
+\begin{itemize}
+ \item \textsc{ncap} does not link against \texttt{boost::iostreams}? One reason might be that this particular library did not compile. In this case try setting the environment variable \texttt{NO\_BZIP2} to 1 and re-run \texttt{bjam}. For bash-like shell the command is ``\texttt{export NO\_BZIP2=1}''.
+ \item \textsc{ncap} does not link at all? Please set the enviroment variable \texttt{LIBRARY\_PATH} to the appropriate path. Consult your local administrator if you don't know how.
+\end{itemize}
+
+}
+
+\subsection{\texttt{zlib}}
+\textsc{ncap} uses \verb+boost::iostreams+ to decompress zipped files on the fly. In order to compile \verb+zlib+-headers are required. See \url{www.zlib.net} for detail and / or consult your systems packaging system.
+
+\section{Programming Standards}
+
+The purpose of these standards is to provide a consistent, professional look for the source code. Deviations from the general rules below are acceptable if they enhance the readability of the code.
+
+That being said, it's perfectly ok, if you do not adhere to the following standards -- as long as the code stays understandable.
+
+\begin{itemize}
+ \item Tabs: There should be no embedded tab characters in the source code.
+ \item Indentation: Normal indentation should be 4 spaces.
+ \item Braces should start directly after an opening statement -- separated with a space\footnote{This is the preferred style of one developer (C. Meesters).}. Example:
+\begin{lstlisting}[style=C++]
+for (i = 1; i = 10; i++) {
+   if (test) {
+      block of code
+   } 
+}
+\end{lstlisting}
+\item Braces should start one line below an opening statement\footnote{This is the preferred style of a second developer (T. Becker).}. Example:
+\begin{lstlisting}[style=C++]
+for (i = 1; i = 10; i++)
+{
+   if (test) {
+      block of code
+   } 
+}
+\end{lstlisting}
+ \item Pragmas may follow yet a different bracing style:
+\begin{lstlisting}[style=C++]
+ #pragma omp critical
+ {
+ some_vector.push_back(item)
+ }
+\end{lstlisting}
+Justification: pragmas are a special compiler directive and -- if braces are needed usually followed by short code segments, which should be easily ``spottable'' / distinguished by the reader.
+ \item Braces are not required for one line conditions or very simple for loops\footnote{Also disliked by one of the developers.}. 
+\begin{lstlisting}[style=C++]
+if (test) return;
+\end{lstlisting}
+ \item Variable declarations:
+ \begin{enumerate}
+   \item Each variable declaration should be in a separate line.
+   \item Pointers and references should be associated with the variable name, not the type. That is, use the K\&R and not the Strostrup style.
+   \item If reasonable, line up variable names and any equal signs for assignments.
+   \item Group variable definitions of the same type together.
+ \end{enumerate}
+ \begin{lstlisting}[style=C++]
+int     x;
+int     range;
+string* lbl_a;
+double  temperature = 72.0;
+double  y           = 1.2;
+\end{lstlisting}
+ \item Class variables. Try to minimize these. When necessary, make public only when truly needed. 
+ \item Spacing:
+ \begin{enumerate}
+   \item There should not be a space between a function name and the opening parenthesis.
+   \item There should be a space after a programming construct ( if, for, while, etc. )
+   \item There should be \textbf{no} space after an opening parenthesis or bracket and before a closing parenthesis or bracket.
+   \item There should be a space around operators such as !, =, <=, etc.
+ \end{enumerate}
+ \begin{lstlisting}[style=C++]
+for (i = 0; i < 10; i++) {
+      x[i] = function(a, b, c);    
+  }
+ \end{lstlisting}
+ \item Try to keep line lengths to 80 characters or less. Occasionally exceeding 80 characters is OK if a line break would detract from the overall readability.
+ \item If arguments to a function don't fit nicely on one line, split it like this:
+ \begin{lstlisting}[style=C++]
+int lots_of_args(int an_integer, long a_long, short a_short,
+                 double a_double, float a_float )
+ \end{lstlisting}
+ \item Line things up when it makes sense.
+\end{itemize}
+
+
+
+
+
