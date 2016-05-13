@@ -64,6 +64,38 @@ namespace ngs {
         }
     }
 
+    /*
+    void trim_adaptors_word(Read &r, const std::vector<std::string> &adaptors) {
+        size_t position;
+        std::string::const_iterator seq_it;
+        for ( auto const &va_it: adaptors ) {
+            position = r.get_seq().find(va_it);
+            if ( position != std::string::npos) {
+                unsigned short int correct = 0;
+                unsigned short int errors  = 0;
+                // we need to calculate the offset
+
+                // position in respect to seqs start
+
+
+                for (seq_it = r.s_begin() + position, a_it = (*va_it).begin(); 
+                     seq_it != r.s_begin() + r.get_r() && a_it != (*va_it).end(); 
+                     ++seq_it, ++a_it) {
+                     if (*seq_it == *a_it) correct += 1;
+                     else errors += 1;
+                     if (errors > ud.a_errors) break;
+                }
+                // if the number of errors is below our minimum, we consider it a hit
+                if (errors <= ud.a_errors && (rlength - (errors + correct)) >= ud.length) {
+                    r.set_right(i);
+                    return;
+                }
+
+            }
+        }
+    }
+    */
+
     void trim_primer(Read &r) {
 	size_t        rlength      = r.get_length();
         std::string::const_iterator seq_it, p_it;
