@@ -9,9 +9,11 @@
 namespace ngs {
     // forward declaration:
     class Read;
-    //! a function to point to, if a certain step shall be ommitted
+    //! a null function to point to, if a certain step shall be ommitted
     inline void null_func(Read &r) {}
-    inline void null_func_vec(Read &r, const std::vector<std::string> &adaptors) {}
+    //! a null function to point to, if a certain step shall be ommitted - accepts 2nd arg
+    template<typename T>
+    inline void null_func_t(Read &r, const T &t) {}
     //not in use: void trim_adaptor(Read &r, const std::string &adaptor);
     void trim_adaptors(Read &r, const std::vector<std::string> &adaptors);
     void trim_primer(Read &r);

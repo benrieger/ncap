@@ -368,19 +368,19 @@ int main(int args, char* argv[]) {
     // nothing given?
     if (ud.fadaptors[0].size() == 0 && ud.fadaptors.size() == 1 &&
         ud.madaptors[0].size() == 0 && ud.madaptors.size() == 1) {
-	fadaptorfunc = &null_func_vec;
-        madaptorfunc = &null_func_vec;
+	fadaptorfunc = &null_func_t;
+        madaptorfunc = &null_func_t;
     }
     // just forward adaptor(s) given?
     else if (ud.fadaptors[0].size() > 0 &&
              ud.madaptors[0].size() == 0 && ud.madaptors.size() == 1) {
 	fadaptorfunc = &trim_adaptors;
-	madaptorfunc = &null_func_vec;
+	madaptorfunc = &null_func_t;
     }
     // just one mate adaptor(s) given?
     else if (ud.fadaptors[0].size() == 0 && ud.fadaptors.size() == 1 &&
              ud.madaptors[0].size() > 0 ) {
-        fadaptorfunc = &null_func_vec;
+        fadaptorfunc = &null_func_t;
         madaptorfunc = &trim_adaptors;
     }
     else {
