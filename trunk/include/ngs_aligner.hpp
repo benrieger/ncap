@@ -9,13 +9,20 @@
 namespace ngs {
     // forward declaration:
     class Read;
+
+    //! a vector of strings to hold adaptors
+    typedef std::vector<std::string> v_adaptors;
+    //! a map of strings, key is the starting position
+    typedef std::map<size_t, std::string> m_adaptors;
+
     //! a null function to point to, if a certain step shall be ommitted
     inline void null_func(Read &r) {}
     //! a null function to point to, if a certain step shall be ommitted - accepts 2nd arg
     template<typename T>
     inline void null_func_t(Read &r, const T &t) {}
+
     //not in use: void trim_adaptor(Read &r, const std::string &adaptor);
-    void trim_adaptors(Read &r, const std::vector<std::string> &adaptors);
+    void trim_adaptors(Read &r, const v_adaptors &adaptors);
     void trim_primer(Read &r);
     void trim_primers(Read &r);
     void quality_filter(Read &r);
