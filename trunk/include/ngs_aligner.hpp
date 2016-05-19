@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
-
-#include "ngs_read.hpp"
+#include <map>
 
 #ifndef NGS_ALIGNER
 #define NGS_ALINGER
@@ -23,9 +22,12 @@ namespace ngs {
 
     //not in use: void trim_adaptor(Read &r, const std::string &adaptor);
     void trim_adaptors(Read &r, const v_adaptors &adaptors);
+    void trim_adaptors_word(Read &r, const m_adaptors &adaptors);
     void trim_primer(Read &r);
     void trim_primers(Read &r);
     void quality_filter(Read &r);
+
+    /*
 
     void NWScore(char* X, char* Y) {
         size_t sY = sizeof(Y);
@@ -44,6 +46,7 @@ namespace ngs {
         for(size_t i = 0; i < sizeof(Y); i++) free(score[i]);
         free(score);
     }
+    */
 } //~ngs
 
 #endif
