@@ -7,6 +7,7 @@
 #include "../include/ngs_read.hpp"
 #include "../include/ngs_interface.hpp"
 #include "../include/ngs_global.hpp"
+#include "../include/ngs_aligner.hpp"
 
 namespace ngs {
     /* The following function was the original test dummy function.
@@ -36,7 +37,7 @@ namespace ngs {
     }
     */
 
-    void trim_adaptors(Read &r, const std::vector<std::string> &adaptors) {
+    void trim_adaptors(Read &r, const v_adaptors &adaptors) {
 	size_t        rlength      = r.get_length();
 	size_t        offset       = rlength - ud.minimum;
         std::string::const_iterator seq_it, a_it;
@@ -64,37 +65,49 @@ namespace ngs {
         }
     }
 
-    /*
-    void trim_adaptors_word(Read &r, const std::vector<std::string> &adaptors) {
-        size_t position;
-        std::string::const_iterator seq_it;
+    void trim_adaptors_word(Read &r, const m_adaptors &adaptors) {
+	size_t rlength      = r.get_length();
+        size_t position, offset;
+        size_t d_padapt; // offset of the partial adaptor
+        std::string::const_iterator seq_it, a_it;
         for ( auto const &va_it: adaptors ) {
-            position = r.get_seq().find(va_it);
+            // va_it.first  = the offset from the adaptor start (for adaptors[0] = 0)
+            // va_it.second = adaptor substring
+            position = r.get_seq().find(va_it.second);
             if ( position != std::string::npos) {
-                unsigned short int correct = 0;
-                unsigned short int errors  = 0;
-                // we need to calculate the offset
+                d_padapt = va_it.first;
+                break;}
+        }
+        // if no hit was obtained:
+        if ( __builtin_expect(position == std::string::npos, 1) ) return;
 
-                // position in respect to seqs start
+            //loop over all possible offsets
+            //for (size_t i = offset; i == 0; i--) {
+        unsigned short int correct = 0;
+        unsigned short int errors  = 0;
 
+        // concatenate all adaptors
+        std::string adaptor;
+        for (auto const & va_it: adaptors) {
+            adaptor += va_it.second;
+        }
+        // we need to calculate the offset of our hit from the start of the sequence
+        offset = position - d_padapt; 
+        
+        for (seq_it = r.s_begin() + offset, a_it = adaptor.begin(); 
+            seq_it != r.s_begin() + r.get_r() && a_it != adaptor.end(); 
+            ++seq_it, ++a_it) {
+            if (*seq_it == *a_it) correct += 1;
+            else errors += 1;
+            if (errors > ud.a_errors) break;
+        }
 
-                for (seq_it = r.s_begin() + position, a_it = (*va_it).begin(); 
-                     seq_it != r.s_begin() + r.get_r() && a_it != (*va_it).end(); 
-                     ++seq_it, ++a_it) {
-                     if (*seq_it == *a_it) correct += 1;
-                     else errors += 1;
-                     if (errors > ud.a_errors) break;
-                }
-                // if the number of errors is below our minimum, we consider it a hit
-                if (errors <= ud.a_errors && (rlength - (errors + correct)) >= ud.length) {
-                    r.set_right(i);
-                    return;
-                }
-
-            }
+        // if the number of errors is below our minimum, we consider it a hit
+        if (errors <= ud.a_errors && (rlength - (errors + correct)) >= ud.length) {
+            //r.set_right(va_it.first);
+            return;
         }
     }
-    */
 
     void trim_primer(Read &r) {
 	size_t        rlength      = r.get_length();
