@@ -142,6 +142,12 @@ namespace ngs {
             // construct container to hold reads
             std::vector<Read> forward, reverse;
             std::vector<std::shared_ptr<std::string> > forward_lines, reverse_lines;
+
+            // here we prepare adaptors for thread-local memory
+            // more ways as for how the preparation works will be included
+
+            std::vector<std::string> fadaptors(ud.fadaptors), madaptors(ud.madaptors);
+
             while (! eof_reached ) {
                 forward_lines.reserve(READ_AHEAD);
                 forward.reserve(READ_AHEAD);
@@ -183,7 +189,7 @@ namespace ngs {
                      // get a 'threadprivate' counter
                      cit = counter[my_thread];
                      // clip adaptors, if applicable
-                     fadaptor_func(*rit, ud.fadaptors);
+                     fadaptor_func(*rit, fadaptors);
                      // clip primers, if applicable
                      primer_func(*rit); 
                      // trimm, if asked for
@@ -213,7 +219,7 @@ namespace ngs {
                      // get a 'threadprivate' counter
                      cit = counter[my_thread];
                      // clip adaptors, if applicable
-                     madaptor_func(*rit, ud.madaptors);
+                     madaptor_func(*rit, madaptors);
                      // clip primers, if applicable
                      primer_func(*rit);
                      // reverse complement, if applicable
@@ -375,6 +381,11 @@ namespace ngs {
         // global stats model
         GlobalStats* sp = GlobalStats::get_Statistics();
 
+        // here we prepare adaptors for thread-local memory
+        // more ways as for how the preparation works will be included
+
+        std::vector<std::string> fadaptors(ud.fadaptors), madaptors(ud.madaptors);
+
         // 3rd: in case of paired reads - open sections
         #pragma omp parallel
         {
@@ -392,7 +403,7 @@ namespace ngs {
                  // reverse complement, if applicable
                  (*rit.*rvcfunc_forward)();
                  // clip adaptors, if applicable
-                 fadaptor_func(*rit, ud.fadaptors);
+                 fadaptor_func(*rit, fadaptors);
                  // clip primers, if applicable
                  primer_func(*rit); 
                  // trimm, if asked for
@@ -414,7 +425,7 @@ namespace ngs {
                  // reverse complement, if applicable
                  (*rit.*rvcfunc_reverse)();
                  // clip adaptors, if applicable
-                 madaptor_func(*rit, ud.madaptors);
+                 madaptor_func(*rit, madaptors);
                  // clip primers, if applicable
                  primer_func(*rit);
 		 // trimm, if asked for
