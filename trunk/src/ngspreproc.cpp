@@ -146,7 +146,7 @@ int main(int args, char* argv[]) {
     #endif // DEBUG
     
     bool version = false;
-    string uadaptor, fadaptor, madaptor, primers, input, output, forward, reverse, configfname;
+    string uadaptor, fadaptor, madaptor, primers, forward, reverse, configfname;
     unsigned int lboundary = 0, rboundary = 0;
 
     /* WARNING: Do not include duplicate option names for the shell
@@ -160,26 +160,17 @@ int main(int args, char* argv[]) {
                             "if set message will be written (to stderr)")
             ("threads,t",   po::value<unsigned int>(&ud.nthreads),
                             "set number of threads to use")
-            ("input,i",     po::value<string>(&input),
-                            "- if omitted the programs reads from stdin (single source)"
-                            " - else, a full qualified path needs to be given"
-                            " - to specifiy paired read files, separate with a comma:"
-                            "   <file1,file2>"
-                            " - files compressed with gzip (usually ending on .gz) can be read")
-            ("if",          po::value<string>(&forward),
-		                    "can be used to specify the forward sequence file of a paired"
-		                    " reads tuple"
-		                    " (mutually exclusive with '-i,--input', requires --rf)")
+            ("if",          po::value<string>(&forward)->required(),
+		            "can be used to specify the forward sequence file of a paired reads tuple,"
+                            "a mate paired read or a single read experiment"
+                            " - files compressed with gzip (usually ending on .gz) can be read"
+                            " - if reading from stdin is actually required, use e.g. bash file"
+                            "   descriptors")
             ("rf",          po::value<string>(&reverse),
-		                    "can be used to specify the 'reverse' sequence file of a paired"
-		                    " reads tuple"
-		                    " (mutually exclusive with '-i,--input', requires --rf)")
+		            "see --if option, can be used to specify the 'reverse' sequence file of"
+                            "a paired end sequencing or mate paired sequencing experiment")
             ("configfile,c", po::value<string>(&configfname),
                              "the path to the configfile (may be omitted)")
-            ("output,o",    po::value<string>(&output),
-                            "if set output will not be written to stdout, but to the designated file/path"
-                            " in case of paired end reads output files should be given as comma separated strings"
-                            " e.g.: \"<prefix>_1.fastq,<prefix>_2.fastq\"")
             ("minimum,m",   po::value<unsigned int>(&ud.minimum),
                             "minimum length an adaptor should fit to (defaults to 15)")
             ("length,L",    po::value<unsigned int>(&ud.length),
@@ -299,27 +290,9 @@ int main(int args, char* argv[]) {
 
     }
     // try dealing witht he input string
-    if ( (vm.count("input") || vm.count("i")) &&  (vm.count("if") || vm.count("rf"))) {
-        commandline_error("-i/--input cannot be used together with --if and/or --rf");
-    }
-    else if ( vm.count("input") || vm.count("i") ) {
-        std::vector<std::string> tmp;
-        boost::algorithm::split(tmp, input, boost::is_any_of(",;"), boost::token_compress_on);
-        ud.input.get<0>() = tmp[0];
-        if ( tmp.size() == 2 ) {
-            ud.input.get<1>() = tmp[1];
-          
-        }
-        else if ( tmp.size() > 2 ) {
-            parsingerror("unable to process more than 2 input files");
-        }
-    }
-    else if (vm.count("if")) {
+    if (vm.count("if")) {
 		ud.input.get<0>() = forward;
-		if (!vm.count("rf")) {
-			commandline_error("--if needs --rf as its counterpard");
-		}
-		else ud.input.get<1>() = reverse;
+		if (vm.count("rf")) ud.input.get<1>() = reverse;
     }
 
     void (*collapsefunc) (vector<Read> &rv, vector<Read> &ov) = NULL;
@@ -331,31 +304,17 @@ int main(int args, char* argv[]) {
         }
     }
 
-    if ( vm.count("output") || vm.count("o") ) {
-       std::vector<string> tmp;
-       boost::algorithm::split(tmp, output, boost::is_any_of(",;"), boost::token_compress_on);
-       if ( tmp.size() > 0 ) {
-           ud.output.get<0>() = tmp[0];
-       }
-       if ( tmp.size() == 2 ) {
-           ud.output.get<1>() = tmp[1];
-       }
-       else if ( tmp.size() > 2 ) {
-          parsingerror("unable to process more than 2 output files");
-       }
+    boost::tuple<string, string> items = split_filename( ud.input.get<0>() );
+    stringstream ss;
+    ss << items.get<0>() << "_filtered." << items.get<1>();
+    ud.output.get<0>() = ss.str();
+    if (ud.input.get<0>().size() == 2) { // 2nd input string given?
+         boost::tuple<string, string> items = split_filename( ud.input.get<1>() );
+         stringstream ss;
+         ss << items.get<0>() << "_filtered." << items.get<1>();
+         ud.output.get<0>() = ss.str();
     }
-    else if ( ud.input.get<1>().size() > 0 ) { // multiple inputs, but no ouput string?
-        boost::tuple<string, string> items = split_filename( ud.input.get<0>() );
-        stringstream ss;
-        ss << items.get<0>() << "_filtered." << items.get<1>();
-        ud.output.get<0>() = ss.str();
-        if (ud.input.get<0>().size() == 2) { // 2nd input string given?
-            boost::tuple<string, string> items = split_filename( ud.input.get<1>() );
-            stringstream ss;
-            ss << items.get<0>() << "_filtered." << items.get<1>();
-            ud.output.get<0>() = ss.str();
-        }
-    }
+    // TODO: add more ouput streams upon demultiplex option
 
     // checking whether we are dealing with 0, 1, or more adaptors
     // but first we distinguish between forward and reverse reads, 
