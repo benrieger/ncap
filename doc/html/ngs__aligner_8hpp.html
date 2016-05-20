@@ -88,6 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">ngs_aligner.hpp File Reference</div>  </div>
@@ -95,7 +96,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock"><code>#include &lt;vector&gt;</code><br/>
 <code>#include &lt;string&gt;</code><br/>
-<code>#include &quot;<a class="el" href="ngs__read_8hpp_source.html">ngs_read.hpp</a>&quot;</code><br/>
+<code>#include &lt;map&gt;</code><br/>
 </div>
 <p><a href="ngs__aligner_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -109,23 +110,35 @@ Macros</h2></td></tr>
 <tr class="memitem:a2f02ab3d2f78532759e2342a6cc63c5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ngs__aligner_8hpp.html#a2f02ab3d2f78532759e2342a6cc63c5c">NGS_ALINGER</a></td></tr>
 <tr class="separator:a2f02ab3d2f78532759e2342a6cc63c5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a58678837911c8ab943f9cbae9f26f500"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a58678837911c8ab943f9cbae9f26f500">ngs::v_adaptors</a></td></tr>
+<tr class="memdesc:a58678837911c8ab943f9cbae9f26f500"><td class="mdescLeft">&#160;</td><td class="mdescRight">a vector of strings to hold adaptors  <a href="#a58678837911c8ab943f9cbae9f26f500">More...</a><br/></td></tr>
+<tr class="separator:a58678837911c8ab943f9cbae9f26f500"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28aa13ee0efba8d590bdd41554a4b92e"><td class="memItemLeft" align="right" valign="top">typedef std::map&lt; size_t, <br class="typebreak"/>
+std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a28aa13ee0efba8d590bdd41554a4b92e">ngs::m_adaptors</a></td></tr>
+<tr class="memdesc:a28aa13ee0efba8d590bdd41554a4b92e"><td class="mdescLeft">&#160;</td><td class="mdescRight">a map of strings, key is the starting position  <a href="#a28aa13ee0efba8d590bdd41554a4b92e">More...</a><br/></td></tr>
+<tr class="separator:a28aa13ee0efba8d590bdd41554a4b92e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a186de41e433700df88315b53ec272268"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a186de41e433700df88315b53ec272268">ngs::null_func</a> (Read &amp;r)</td></tr>
-<tr class="memdesc:a186de41e433700df88315b53ec272268"><td class="mdescLeft">&#160;</td><td class="mdescRight">a function to point to, if a certain step shall be ommitted  <a href="#a186de41e433700df88315b53ec272268">More...</a><br/></td></tr>
+<tr class="memdesc:a186de41e433700df88315b53ec272268"><td class="mdescLeft">&#160;</td><td class="mdescRight">a null function to point to, if a certain step shall be ommitted  <a href="#a186de41e433700df88315b53ec272268">More...</a><br/></td></tr>
 <tr class="separator:a186de41e433700df88315b53ec272268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3964766b200a05b3a72304862c88bcb8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a3964766b200a05b3a72304862c88bcb8">ngs::null_func_vec</a> (Read &amp;r, const std::vector&lt; std::string &gt; &amp;adaptors)</td></tr>
-<tr class="separator:a3964766b200a05b3a72304862c88bcb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad565d07cc282eb03facb16d00a5fb38f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#ad565d07cc282eb03facb16d00a5fb38f">ngs::trim_adaptors</a> (Read &amp;r, const std::vector&lt; std::string &gt; &amp;adaptors)</td></tr>
-<tr class="separator:ad565d07cc282eb03facb16d00a5fb38f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a42bfc3c24197c72754e9275d6e9aa6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6a42bfc3c24197c72754e9275d6e9aa6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacengs.html#a6a42bfc3c24197c72754e9275d6e9aa6">ngs::null_func_t</a> (Read &amp;r, const T &amp;t)</td></tr>
+<tr class="memdesc:a6a42bfc3c24197c72754e9275d6e9aa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">a null function to point to, if a certain step shall be ommitted - accepts 2nd arg  <a href="#a6a42bfc3c24197c72754e9275d6e9aa6">More...</a><br/></td></tr>
+<tr class="separator:a6a42bfc3c24197c72754e9275d6e9aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16467032722913b4ee3ac8d65cfe3a55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a16467032722913b4ee3ac8d65cfe3a55">ngs::trim_adaptors</a> (Read &amp;r, const v_adaptors &amp;adaptors)</td></tr>
+<tr class="separator:a16467032722913b4ee3ac8d65cfe3a55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c47d04bf1b93846da3e45fbe22b01a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a9c47d04bf1b93846da3e45fbe22b01a0">ngs::trim_adaptors_word</a> (Read &amp;r, const m_adaptors &amp;adaptors)</td></tr>
+<tr class="separator:a9c47d04bf1b93846da3e45fbe22b01a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad941958fcb12805c61afe0a08f357a6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#ad941958fcb12805c61afe0a08f357a6a">ngs::trim_primer</a> (Read &amp;r)</td></tr>
 <tr class="separator:ad941958fcb12805c61afe0a08f357a6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab56365e510dacc4dc53ab6953fe5286b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#ab56365e510dacc4dc53ab6953fe5286b">ngs::trim_primers</a> (Read &amp;r)</td></tr>
 <tr class="separator:ab56365e510dacc4dc53ab6953fe5286b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89f3e35bdaef36e882ebbd6829859370"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a89f3e35bdaef36e882ebbd6829859370">ngs::quality_filter</a> (Read &amp;r)</td></tr>
 <tr class="separator:a89f3e35bdaef36e882ebbd6829859370"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d498ff3a863360aa411e2a333319676"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacengs.html#a4d498ff3a863360aa411e2a333319676">ngs::NWScore</a> (char *X, char *Y)</td></tr>
-<tr class="separator:a4d498ff3a863360aa411e2a333319676"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a2f02ab3d2f78532759e2342a6cc63c5c"></a>
@@ -138,14 +151,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="ngs__aligner_8hpp_source.html#l00007">7</a> of file <a class="el" href="ngs__aligner_8hpp_source.html">ngs_aligner.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ngs__aligner_8hpp_source.html#l00006">6</a> of file <a class="el" href="ngs__aligner_8hpp_source.html">ngs_aligner.hpp</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 12 2016 20:59:24 for ncap by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 20 2016 18:05:31 for ncap by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
