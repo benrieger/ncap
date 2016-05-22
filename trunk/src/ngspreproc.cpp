@@ -82,7 +82,7 @@ void setupcrashhandlers() {
 
 void helpmessage(po::options_description &options) {
    cerr << "*------------------------------------------------*" << endl
-        << "| NCAP |    ";
+        << "| NCAP       |    ";
    cerr << tuples::set_open(' ') << tuples::set_close(' ')
         << tuples::set_delimiter('.') << VERSION;
    // consider lenght of the version tuple
@@ -94,6 +94,8 @@ void helpmessage(po::options_description &options) {
    cerr << "|  " << DATE << "  |" << endl;
    cerr << "*------------------------------------------------*" << endl;
    cerr << "| (c) Christian Meesters                         |" << endl
+        << "|     Steffen Rapp                               |" << endl
+        << "|     Benjamin Rieger                            |" << endl
         << "| Gnu Public License v3                          |" << endl
         << "*------------------------------------------------*" << endl << endl;
    cerr << options << endl;
@@ -156,10 +158,26 @@ int main(int args, char* argv[]) {
     po::options_description general("General Command Line Options");
     general.add_options()
             ("help,h",      "produce help message")
+            ("version",     po::value<bool>(&version)->zero_tokens(),
+                            "if set, NCAP will print its version and exit")
             ("verbose,v",   po::value<bool>(&ud.verbose),
                             "if set message will be written (to stderr)")
             ("threads,t",   po::value<unsigned int>(&ud.nthreads),
                             "set number of threads to use")
+            ("keep_comments", po::value<bool>(&ud.keep_comment)->zero_tokens(),
+                            "if set, comments will be kept (takes more RAM) for certain algorithms")
+            ("allow-N",     po::value<bool>(&ud.allowN)->zero_tokens(),
+                            "if set, nucleotides labelled as 'N' are not counted as errors")
+            ("rc",          po::value<bool>(&ud.reverse_complement)->zero_tokens(),
+                            "is set, the reverse complement will be taken for each sequence"
+                            "if a paired-end file tuple is given, only the second file will"
+                            "be 'reverse-complemented'")
+            ("collapse",    po::value<bool>(&ud.collapse)->zero_tokens(),
+	                    "will discard all double reads"
+                            "in case of paired end mates, the mate will also be invalided")
+           ;
+    po::options_description io("File handling");
+    io.add_options()
             ("if",          po::value<string>(&forward)->required(),
 		            "can be used to specify the forward sequence file of a paired reads tuple,"
                             "a mate paired read or a single read experiment"
@@ -170,23 +188,32 @@ int main(int args, char* argv[]) {
 		            "see --if option, can be used to specify the 'reverse' sequence file of"
                             "a paired end sequencing or mate paired sequencing experiment")
             ("configfile,c", po::value<string>(&configfname),
-                             "the path to the configfile (may be omitted)")
+                             "the path to the configfile (may be omitted)");
+            ("encoding",    po::value<encoding>(),
+                            "FASTQ format encoding, defaults to \"sanger\" resulting in a +33 ASCII offset for the quality string. Allowed values are: 'sanger', 'solexa' and 'illumina' with 33, 64 and 64 offsets, respectively")
+            ("fasta",       po::value<bool>(&ud.fasta)->zero_tokens(),
+                            "if set, output will be written FASTA format")
+    po::options_description trimming("Trimming options");
+    trimming.add_options()
             ("minimum,m",   po::value<unsigned int>(&ud.minimum),
                             "minimum length an adaptor should fit to (defaults to 15)")
             ("length,L",    po::value<unsigned int>(&ud.length),
                             "discard remaining read(s), if their length is < l (default is 5)")
-            ("uadaptors",   po::value<string>(&uadaptor),
-                            "the adaptor string (universal = applied on all sequences); several adaptors may be given (comma separated)")
             ("fadaptors",   po::value<string>(&fadaptor),
                             "the adaptor string (forward = applied on all forward sequences in mate pair sequencing); several adaptors may be given (comma separated)")
-            ("madaptors",   po::value<string>(&madaptor),
-                            "the adaptor string (universal = applied on all sequences); several adaptors may be given (comma separated)")
+            ("radaptors",   po::value<string>(&radaptor),
+                            "the adaptor string (reverse = applied on all reverse reads); several adaptors may be given (comma separated)")
             ("e_adaptor",   po::value<short unsigned int>(&ud.a_errors),
                             "number of errors an alignment may show")
             ("primers,p",   po::value<string>(&primers),
-                            "the primer string, several primers may be given (comma separated)")
-            ("quality,q",   po::value<unsigned int>(&ud.quality),
-                            "minimum quality threshold score the remaining read should pass (defaults to 0)")
+                            "the primer string, several primers may be given (comma separated)");
+    po::options_description demultiplex("De-Multiplexing options");
+    demultiplex.add_options()
+            ("index_seqs", po::value<string>(&index_seqs),
+                            "indicate indexing sequences in a comma separated string,"
+                            "the number of bins will be equal to the number of sequences")
+    po::options_description quality("Quality aspects");
+    quality.add_options()
 	    ("fraction,f",  po::value<double>(&ud.fraction),
 	                    "minimum percentage of bases which must have -q quality")
 	    ("lboundary,l", po::value<unsigned int>(&lboundary),
@@ -199,36 +226,21 @@ int main(int args, char* argv[]) {
                             " where 'l' is the first base to keep (default =1)"
                             " and 'r' is the last base to keep (default = no limit)"
                             " ; see 'rboundary,r' options")
-            ("encoding",    po::value<encoding>(),
-                            "FASTQ format encoding, defaults to \"sanger\" resulting in a +33 ASCII offset for the quality string. Allowed values are: 'sanger', 'solexa' and 'illumina' with 33, 64 and 64 offsets, respectively")
-            ("allow-N",     po::value<bool>(&ud.allowN)->zero_tokens(),
-                            "if set, nucleotides labelled as 'N' are not counted as errors")
-            ("rc",          po::value<bool>(&ud.reverse_complement)->zero_tokens(),
-                            "is set, the reverse complement will be taken for each sequence"
-                            "if a paired-end file tuple is given, only the second file will"
-                            "be 'reverse-complemented'")
-            ("keep_comments", po::value<bool>(&ud.keep_comment)->zero_tokens(),
-                            "if set, comments will be kept (takes more RAM)")
-            ("collapse",    po::value<bool>(&ud.collapse)->zero_tokens(),
-	                    "will discard all double reads"
-                            "in case of paired end mates, the mate will also be invalided")
-            ("fasta",       po::value<bool>(&ud.fasta)->zero_tokens(),
-                            "if set, output will be written FASTA format")
-            ("version",     po::value<bool>(&version)->zero_tokens(),
-                            "if set, NGSPREPROC will print its version and exit")
+            ("quality,q",   po::value<unsigned int>(&ud.quality),
+                            "minimum quality threshold score the remaining read should pass (defaults to 0)");
            ;
 
     // the file to contain adaptor information
     po::options_description config("ConfigFile");
     config.add_options()
         ("forward"  ,po::value<string>(), "")
-        ("mate"     ,po::value<string>(), "")
+        ("reverse"  ,po::value<string>(), "")
         ("universal",po::value<string>(), "")
         ;
 
     // add options 
     po::options_description cmdline_options;
-    cmdline_options.add(general);
+    cmdline_options.add(general).add(trimming).add(quality);
 
     po::options_description config_file_options;
     config_file_options.add(config);
@@ -275,8 +287,7 @@ int main(int args, char* argv[]) {
     ifstream configfile(configfname.c_str());
     if (!configfile) {
        // we now need to extract the necessary run time info
-        
-         boost::algorithm::split(ud.uadaptors, uadaptor, boost::is_any_of(",;"), boost::token_compress_on);
+       boost::algorithm::split(ud.uadaptors, uadaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.fadaptors, fadaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.madaptors, madaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.primers, primers, boost::is_any_of(",;"), boost::token_compress_on);
@@ -377,7 +388,7 @@ int main(int args, char* argv[]) {
     else trimfunc = &null_func;
 
     if (vm.count("help") || vm.count("h")) {
-        helpmessage(general);
+        helpmessage(cmdline_options);
         exit(EXIT_SUCCESS);
     }
 
