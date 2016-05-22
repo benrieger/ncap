@@ -38,8 +38,7 @@ namespace ngs {
     */
     void conf_extractor(boost::program_options::variables_map &vm,
                         std::vector<std::string> &fadaptors,
-                        std::vector<std::string> &radaptors,
-                        std::vector<std::string> &uadaptors); 
+                        std::vector<std::string> &radaptors); 
     } //~ conffile
         
 } //~ ngs

@@ -29,12 +29,10 @@ namespace ngs {
         unsigned int minimum;
         //! minimum length of the remaining read
         unsigned int length;
-        //! univsersal adaptors
-        std::vector<std::string> uadaptors;
         //! forward adaptors
         std::vector<std::string> fadaptors;
         //! reverse adaptors
-        std::vector<std::string> madaptors;
+        std::vector<std::string> radaptors;
         //! number of allowed errors for a given alignment
         short unsigned int a_errors;
         //! primers 5'
@@ -68,9 +66,8 @@ namespace ngs {
                      output("", ""),
                      minimum(15),
                      length(5),
-                     uadaptors(std::vector<std::string>()),
                      fadaptors(std::vector<std::string>()),
-                     madaptors(std::vector<std::string>()),
+                     radaptors(std::vector<std::string>()),
                      a_errors(0),
                      primers(std::vector<std::string>()),
                      quality(0),

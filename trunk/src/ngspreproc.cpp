@@ -148,7 +148,7 @@ int main(int args, char* argv[]) {
     #endif // DEBUG
     
     bool version = false;
-    string uadaptor, fadaptor, madaptor, primers, forward, reverse, configfname;
+    string uadaptor, fadaptor, radaptor, primers, forward, reverse, configfname, index_seqs;
     unsigned int lboundary = 0, rboundary = 0;
 
     /* WARNING: Do not include duplicate option names for the shell
@@ -188,11 +188,11 @@ int main(int args, char* argv[]) {
 		            "see --if option, can be used to specify the 'reverse' sequence file of"
                             "a paired end sequencing or mate paired sequencing experiment")
             ("configfile,c", po::value<string>(&configfname),
-                             "the path to the configfile (may be omitted)");
+                             "the path to the configfile (may be omitted)")
             ("encoding",    po::value<encoding>(),
                             "FASTQ format encoding, defaults to \"sanger\" resulting in a +33 ASCII offset for the quality string. Allowed values are: 'sanger', 'solexa' and 'illumina' with 33, 64 and 64 offsets, respectively")
             ("fasta",       po::value<bool>(&ud.fasta)->zero_tokens(),
-                            "if set, output will be written FASTA format")
+                            "if set, output will be written FASTA format");
     po::options_description trimming("Trimming options");
     trimming.add_options()
             ("minimum,m",   po::value<unsigned int>(&ud.minimum),
@@ -211,7 +211,7 @@ int main(int args, char* argv[]) {
     demultiplex.add_options()
             ("index_seqs", po::value<string>(&index_seqs),
                             "indicate indexing sequences in a comma separated string,"
-                            "the number of bins will be equal to the number of sequences")
+                            "the number of bins will be equal to the number of sequences");
     po::options_description quality("Quality aspects");
     quality.add_options()
 	    ("fraction,f",  po::value<double>(&ud.fraction),
@@ -287,17 +287,15 @@ int main(int args, char* argv[]) {
     ifstream configfile(configfname.c_str());
     if (!configfile) {
        // we now need to extract the necessary run time info
-       boost::algorithm::split(ud.uadaptors, uadaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.fadaptors, fadaptor, boost::is_any_of(",;"), boost::token_compress_on);
-       boost::algorithm::split(ud.madaptors, madaptor, boost::is_any_of(",;"), boost::token_compress_on);
+       boost::algorithm::split(ud.radaptors, radaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.primers, primers, boost::is_any_of(",;"), boost::token_compress_on);
     } else {
         po::store(po::parse_config_file(configfile, config_file_options), vm);
         po::notify(vm);
         ngs::conffile::conf_extractor(vm, 
                                       ud.fadaptors,
-                                      ud.madaptors,
-                                      ud.uadaptors);
+                                      ud.radaptors);
 
     }
     // try dealing witht he input string
@@ -328,34 +326,30 @@ int main(int args, char* argv[]) {
     // TODO: add more ouput streams upon demultiplex option
 
     // checking whether we are dealing with 0, 1, or more adaptors
-    // but first we distinguish between forward and reverse reads, 
-    // if applicable:
-    ud.fadaptors.insert(ud.fadaptors.end(), ud.uadaptors.begin(), ud.uadaptors.end());
-    ud.madaptors.insert(ud.madaptors.end(), ud.uadaptors.begin(), ud.uadaptors.end());
     
     void (*fadaptorfunc) (Read &r, const std::vector<std::string> &a) = NULL;
-    void (*madaptorfunc) (Read &r, const std::vector<std::string> &a) = NULL;
+    void (*radaptorfunc) (Read &r, const std::vector<std::string> &a) = NULL;
     // nothing given?
     if (ud.fadaptors[0].size() == 0 && ud.fadaptors.size() == 1 &&
-        ud.madaptors[0].size() == 0 && ud.madaptors.size() == 1) {
+        ud.radaptors[0].size() == 0 && ud.radaptors.size() == 1) {
 	fadaptorfunc = &null_func_t;
-        madaptorfunc = &null_func_t;
+        radaptorfunc = &null_func_t;
     }
     // just forward adaptor(s) given?
     else if (ud.fadaptors[0].size() > 0 &&
-             ud.madaptors[0].size() == 0 && ud.madaptors.size() == 1) {
+             ud.radaptors[0].size() == 0 && ud.radaptors.size() == 1) {
 	fadaptorfunc = &trim_adaptors;
-	madaptorfunc = &null_func_t;
+	radaptorfunc = &null_func_t;
     }
     // just one mate adaptor(s) given?
     else if (ud.fadaptors[0].size() == 0 && ud.fadaptors.size() == 1 &&
-             ud.madaptors[0].size() > 0 ) {
+             ud.radaptors[0].size() > 0 ) {
         fadaptorfunc = &null_func_t;
-        madaptorfunc = &trim_adaptors;
+        radaptorfunc = &trim_adaptors;
     }
     else {
         fadaptorfunc = &trim_adaptors;
-        madaptorfunc = &trim_adaptors;
+        radaptorfunc = &trim_adaptors;
     } 
     // repeating for primers
     void (*primerfunc) (Read &r) = NULL;
@@ -407,9 +401,9 @@ int main(int args, char* argv[]) {
         outfunc = &write_reads;
     }
 
-    if (!ud.collapse) read_filter_parallelio(fadaptorfunc, madaptorfunc, primerfunc, outfunc, trimfunc);
+    if (!ud.collapse) read_filter_parallelio(fadaptorfunc, radaptorfunc, primerfunc, outfunc, trimfunc);
     else
-    read_filter(fadaptorfunc, madaptorfunc, primerfunc, outfunc, trimfunc, collapsefunc);
+    read_filter(fadaptorfunc, radaptorfunc, primerfunc, outfunc, trimfunc, collapsefunc);
     #ifdef TIMER
     }
     #endif

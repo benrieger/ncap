@@ -25,7 +25,7 @@ namespace ngs {
     const size_t READ_AHEAD = 100000;
     void read_filter_parallelio(
                      void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*madaptor_func) (Read &r, const std::vector<std::string> &a),
+                     void (*radaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read>& r, 
                                      std::ostream &o, std::ostream &e),
@@ -146,7 +146,7 @@ namespace ngs {
             // here we prepare adaptors for thread-local memory
             // more ways as for how the preparation works will be included
 
-            std::vector<std::string> fadaptors(ud.fadaptors), madaptors(ud.madaptors);
+            std::vector<std::string> fadaptors(ud.fadaptors), radaptors(ud.radaptors);
 
             while (! eof_reached ) {
                 forward_lines.reserve(READ_AHEAD);
@@ -219,7 +219,7 @@ namespace ngs {
                      // get a 'threadprivate' counter
                      cit = counter[my_thread];
                      // clip adaptors, if applicable
-                     madaptor_func(*rit, madaptors);
+                     radaptor_func(*rit, radaptors);
                      // clip primers, if applicable
                      primer_func(*rit);
                      // reverse complement, if applicable
@@ -279,7 +279,7 @@ namespace ngs {
 
     void read_filter(
                      void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*madaptor_func) (Read &r, const std::vector<std::string> &a),
+                     void (*radaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read>& r, 
                                      std::ostream &o, std::ostream &e),
@@ -384,7 +384,7 @@ namespace ngs {
         // here we prepare adaptors for thread-local memory
         // more ways as for how the preparation works will be included
 
-        std::vector<std::string> fadaptors(ud.fadaptors), madaptors(ud.madaptors);
+        std::vector<std::string> fadaptors(ud.fadaptors), radaptors(ud.radaptors);
 
         // 3rd: in case of paired reads - open sections
         #pragma omp parallel
@@ -425,7 +425,7 @@ namespace ngs {
                  // reverse complement, if applicable
                  (*rit.*rvcfunc_reverse)();
                  // clip adaptors, if applicable
-                 madaptor_func(*rit, madaptors);
+                 radaptor_func(*rit, radaptors);
                  // clip primers, if applicable
                  primer_func(*rit);
 		 // trimm, if asked for
