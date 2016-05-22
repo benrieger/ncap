@@ -240,7 +240,7 @@ int main(int args, char* argv[]) {
 
     // add options 
     po::options_description cmdline_options;
-    cmdline_options.add(general).add(trimming).add(quality);
+    cmdline_options.add(general).add(trimming).add(demultiplex).add(quality);
 
     po::options_description config_file_options;
     config_file_options.add(config);
