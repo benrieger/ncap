@@ -169,9 +169,10 @@ int main(int args, char* argv[]) {
             ("allow-N",     po::value<bool>(&ud.allowN)->zero_tokens(),
                             "if set, nucleotides labelled as 'N' are not counted as errors")
             ("rc",          po::value<bool>(&ud.reverse_complement)->zero_tokens(),
-                            "is set, the reverse complement will be taken for each sequence"
-                            "if a paired-end file tuple is given, only the second file will"
-                            "be 'reverse-complemented'")
+                            "if set, the reverse complement will be taken for each sequence "
+                            "if a paired-end file tuple is given, only the second file will "
+                            "be 'reverse-complemented', else the single read input will be "
+                            "affected (upon output, only)")
             ("collapse",    po::value<bool>(&ud.collapse)->zero_tokens(),
 	                    "will discard all double reads"
                             "in case of paired end mates, the mate will also be invalided")
@@ -179,10 +180,10 @@ int main(int args, char* argv[]) {
     po::options_description io("File handling");
     io.add_options()
             ("if",          po::value<string>(&forward)->required(),
-		            "can be used to specify the forward sequence file of a paired reads tuple,"
-                            "a mate paired read or a single read experiment"
-                            " - files compressed with gzip (usually ending on .gz) can be read"
-                            " - if reading from stdin is actually required, use e.g. bash file"
+		            "can be used to specify the forward sequence file of a paired reads tuple, "
+                            "a mate paired read or a single read experiment: "
+                            " - files compressed with gzip (usually ending on .gz) can be read "
+                            " - if reading from stdin is actually required, use e.g. bash file "
                             "   descriptors")
             ("rf",          po::value<string>(&reverse),
 		            "see --if option, can be used to specify the 'reverse' sequence file of"
