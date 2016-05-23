@@ -199,7 +199,7 @@ int main(int args, char* argv[]) {
             ("minimum,m",   po::value<unsigned int>(&ud.minimum),
                             "minimum length an adaptor should fit to (defaults to 15)")
             ("length,L",    po::value<unsigned int>(&ud.length),
-                            "discard remaining read(s), if their length is < l (default is 5)")
+                            "discard remaining read(s), if their length is < L (default is 30)")
             ("fadaptors",   po::value<string>(&fadaptor),
                             "the adaptor string (forward = applied on all forward sequences in mate pair sequencing); several adaptors may be given (comma separated)")
             ("radaptors",   po::value<string>(&radaptor),

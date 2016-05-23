@@ -65,7 +65,7 @@ namespace ngs {
                      input("", ""),
                      output("", ""),
                      minimum(15),
-                     length(5),
+                     length(30),
                      fadaptors(std::vector<std::string>()),
                      radaptors(std::vector<std::string>()),
                      a_errors(0),
