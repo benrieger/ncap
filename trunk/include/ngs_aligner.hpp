@@ -23,8 +23,8 @@ namespace ngs {
     //not in use: void trim_adaptor(Read &r, const std::string &adaptor);
     void trim_adaptors(Read &r, const v_adaptors &adaptors);
     void trim_adaptors_word(Read &r, const m_adaptors &adaptors);
-    void trim_primer(Read &r);
-    void trim_primers(Read &r);
+    //not in use: void trim_primer(Read &r);
+    //not in use: void trim_primers(Read &r);
     void quality_filter(Read &r);
 
     /*

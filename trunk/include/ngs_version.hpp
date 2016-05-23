@@ -12,7 +12,7 @@ typedef boost::tuple<int, int, int> version;
 
 namespace ngs {
      const version VERSION(0,1,0);
-     const std::string DATE(" 22. May 2016");
+     const std::string DATE(" 23. May 2016");
      #ifdef __GNUC__ 
       const gcc_version GCC_VERSION(__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__);
      #endif 

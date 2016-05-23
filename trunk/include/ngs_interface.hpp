@@ -35,10 +35,6 @@ namespace ngs {
         std::vector<std::string> radaptors;
         //! number of allowed errors for a given alignment
         short unsigned int a_errors;
-        //! primers 5'
-        std::vector<std::string> primers;
-        //! internal use: for setting only one primer and avoiding loops
-        std::string _primer;
         //! number of allowed errors for a given alignment
         short unsigned int p_errors;
         //! quality threshold
@@ -69,7 +65,6 @@ namespace ngs {
                      fadaptors(std::vector<std::string>()),
                      radaptors(std::vector<std::string>()),
                      a_errors(0),
-                     primers(std::vector<std::string>()),
                      quality(0),
                      fraction(0),
                      boundaries(left, right),

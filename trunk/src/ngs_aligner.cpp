@@ -109,6 +109,7 @@ namespace ngs {
         }
     }
 
+    /* not in use:
     void trim_primer(Read &r) {
 	size_t        rlength      = r.get_length();
         std::string::const_iterator seq_it, p_it;
@@ -159,5 +160,6 @@ namespace ngs {
             }
         }
     }
+    */
     
 } //~ngs

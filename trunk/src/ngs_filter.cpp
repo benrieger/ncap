@@ -26,7 +26,6 @@ namespace ngs {
     void read_filter_parallelio(
                      void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*radaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read>& r, 
                                      std::ostream &o, std::ostream &e),
                      void (*trim_func)(Read &r)
@@ -190,8 +189,6 @@ namespace ngs {
                      cit = counter[my_thread];
                      // clip adaptors, if applicable
                      fadaptor_func(*rit, fadaptors);
-                     // clip primers, if applicable
-                     primer_func(*rit); 
                      // trimm, if asked for
                      trim_func(*rit);
                      // reverse complement, if applicable
@@ -220,8 +217,6 @@ namespace ngs {
                      cit = counter[my_thread];
                      // clip adaptors, if applicable
                      radaptor_func(*rit, radaptors);
-                     // clip primers, if applicable
-                     primer_func(*rit);
                      // reverse complement, if applicable
                      (*rit.*rvcfunc_reverse)();
 		     // trimm, if asked for
@@ -280,7 +275,6 @@ namespace ngs {
     void read_filter(
                      void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*radaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read>& r, 
                                      std::ostream &o, std::ostream &e),
                      void (*trim_func)(Read &r),
@@ -404,8 +398,6 @@ namespace ngs {
                  (*rit.*rvcfunc_forward)();
                  // clip adaptors, if applicable
                  fadaptor_func(*rit, fadaptors);
-                 // clip primers, if applicable
-                 primer_func(*rit); 
                  // trimm, if asked for
                  trim_func(*rit);
                  // adapt gathered limits
@@ -426,8 +418,6 @@ namespace ngs {
                  (*rit.*rvcfunc_reverse)();
                  // clip adaptors, if applicable
                  radaptor_func(*rit, radaptors);
-                 // clip primers, if applicable
-                 primer_func(*rit);
 		 // trimm, if asked for
 		 trim_func(*rit);
                  // adapt gathered limits

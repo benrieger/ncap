@@ -20,7 +20,6 @@ namespace ngs {
     void read_filter_parallelio(
                      void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*madaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read>& r, 
                                      std::ostream &o, std::ostream &e),
                      void (*trim_func)(Read &r)
@@ -29,7 +28,6 @@ namespace ngs {
     //! simple filter (adaptor trimming, clipping, quality, etc.)
     void read_filter(void (*fadaptor_func) (Read &r, const std::vector<std::string> &a),
                      void (*madaptor_func) (Read &r, const std::vector<std::string> &a),
-                     void (*primer_func) (Read &r),
                      void (*out_func)(const std::vector<Read> &r, 
                                      std::ostream &o, std::ostream &e),
                      void (*trim_func)(Read &r),

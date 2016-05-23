@@ -148,7 +148,7 @@ int main(int args, char* argv[]) {
     #endif // DEBUG
     
     bool version = false;
-    string uadaptor, fadaptor, radaptor, primers, forward, reverse, configfname, index_seqs;
+    string uadaptor, fadaptor, radaptor, forward, reverse, configfname, index_seqs;
     unsigned int lboundary = 0, rboundary = 0;
 
     /* WARNING: Do not include duplicate option names for the shell
@@ -205,14 +205,14 @@ int main(int args, char* argv[]) {
             ("radaptors",   po::value<string>(&radaptor),
                             "the adaptor string (reverse = applied on all reverse reads); several adaptors may be given (comma separated)")
             ("e_adaptor",   po::value<short unsigned int>(&ud.a_errors),
-                            "number of errors an alignment may show")
-            ("primers,p",   po::value<string>(&primers),
-                            "the primer string, several primers may be given (comma separated)");
+                            "number of errors an alignment may show");
+/*TODO: implement demultiplexing
     po::options_description demultiplex("De-Multiplexing options");
     demultiplex.add_options()
             ("index_seqs", po::value<string>(&index_seqs),
                             "indicate indexing sequences in a comma separated string,"
                             "the number of bins will be equal to the number of sequences");
+*/
     po::options_description quality("Quality aspects");
     quality.add_options()
 	    ("fraction,f",  po::value<double>(&ud.fraction),
@@ -236,12 +236,12 @@ int main(int args, char* argv[]) {
     config.add_options()
         ("forward"  ,po::value<string>(), "")
         ("reverse"  ,po::value<string>(), "")
-        ("universal",po::value<string>(), "")
         ;
 
     // add options 
     po::options_description cmdline_options;
-    cmdline_options.add(general).add(trimming).add(demultiplex).add(quality);
+    //cmdline_options.add(general).add(trimming).add(demultiplex).add(quality);
+    cmdline_options.add(general).add(trimming).add(quality);
 
     po::options_description config_file_options;
     config_file_options.add(config);
@@ -290,7 +290,6 @@ int main(int args, char* argv[]) {
        // we now need to extract the necessary run time info
        boost::algorithm::split(ud.fadaptors, fadaptor, boost::is_any_of(",;"), boost::token_compress_on);
        boost::algorithm::split(ud.radaptors, radaptor, boost::is_any_of(",;"), boost::token_compress_on);
-       boost::algorithm::split(ud.primers, primers, boost::is_any_of(",;"), boost::token_compress_on);
     } else {
         po::store(po::parse_config_file(configfile, config_file_options), vm);
         po::notify(vm);
@@ -352,18 +351,6 @@ int main(int args, char* argv[]) {
         fadaptorfunc = &trim_adaptors;
         radaptorfunc = &trim_adaptors;
     } 
-    // repeating for primers
-    void (*primerfunc) (Read &r) = NULL;
-    if (ud.primers[0].size() == 0 && ud.primers.size() == 1) {
-	primerfunc = &null_func;
-    }
-    else if (ud.primers[0].size() > 0 && ud.primers.size() == 1) {
-        ud._primer = ud.primers[0];
-	primerfunc = &trim_primer;
-    }
-    else {
-        primerfunc = &trim_primers;
-    } 
 
     // setting boundaries
     void (*trimfunc) (Read &r) = NULL;
@@ -402,9 +389,9 @@ int main(int args, char* argv[]) {
         outfunc = &write_reads;
     }
 
-    if (!ud.collapse) read_filter_parallelio(fadaptorfunc, radaptorfunc, primerfunc, outfunc, trimfunc);
+    if (!ud.collapse) read_filter_parallelio(fadaptorfunc, radaptorfunc, outfunc, trimfunc);
     else
-    read_filter(fadaptorfunc, radaptorfunc, primerfunc, outfunc, trimfunc, collapsefunc);
+    read_filter(fadaptorfunc, radaptorfunc, outfunc, trimfunc, collapsefunc);
     #ifdef TIMER
     }
     #endif
